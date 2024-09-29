@@ -30,7 +30,11 @@ def buscar_palabra(palabras: List[str], palabra: str) -> bool:
         >>> palabras
         ['ADIOS', 'HASTA', 'LUEGO']
     """
-    pass
+    if palabra in palabras:
+        palabras.remove(palabra)
+        return True
+    else:
+        return False
 
 
 def rellenar_celdas_vacias(letras: List[List[str]]) -> None:
@@ -57,7 +61,9 @@ def rellenar_celdas_vacias(letras: List[List[str]]) -> None:
          ['T', 'V', 'Q', 'N', 'H'],
          ['Ñ', 'R', 'I', 'Y', 'A']]
     """
-    pass
+    for fila in letras:
+        for i in range(len(fila)):
+            fila[i] = random.choice(LETRAS_MAYUSCULAS_ESPAÑOL)
 
 
 def check_longitud_palabras(
@@ -83,7 +89,9 @@ def check_longitud_palabras(
         ...
         ValueError: La palabra HOLA no cabe en un tablero de 2x2
     """
-    pass
+    for palabra in palabras:
+        if filas < len(palabra) or columnas < len(palabra):
+            raise ValueError("len(palabra) es mayor que fila o columna")
 
 
 def inicializar_sopa_vacia(filas: int, columnas: int) -> List[List[str]]:
@@ -100,7 +108,7 @@ def inicializar_sopa_vacia(filas: int, columnas: int) -> List[List[str]]:
         >>> inicializa_sopa_vacia(2, 3)
         [[' ', ' ', ' '], [' ', ' ', ' ']]
     """
-    pass
+    return [[' ' for _ in range(columnas)] for _ in range(filas)]
 
 
 def elegir_posicion_y_direccion_aleatorias(
@@ -129,7 +137,8 @@ def elegir_posicion_y_direccion_aleatorias(
         >>> elige_posicion_y_direccion("HOLA", 6, 6)
         (1, 5, 2)
     """
-    pass
+    check_longitud_palabras([palabra], filas, columnas)
+    return (random.randint(1, 3), random.randint(0, filas), random.randint(0, columnas))
 
 
 def escribir_palabra(
@@ -181,7 +190,29 @@ def escribir_palabra(
          ['T', 'V', 'Q', 'O', 'H'],
          ['Ñ', 'R', 'I', 'Y', 'S']]
     """
-    pass
+    check_longitud_palabras([palabra], len(letras), len(letras[0]))
+
+    # Coprobamos la longitud y
+    if columna + len(palabra) > len(letras[0]) or columna + len(palabra) > len(letras):
+        raise IndexError("La palabra no cabe en la matriz con la columna dada")
+    if fila + len(palabra) > len(letras) or fila + len(palabra) > len(letras):
+        raise IndexError("La palabra no cabe en la matriz con la fila dada")
+
+    # Comprobamos la dirección
+    match direccion:
+        case 'HORIZONTAL':
+            for i in range(len(palabra)):
+                letras[fila][columna+i] = palabra[i]
+        case 'VERTICAL':
+            for i in range(len(palabra)):
+                letras[fila+i][columna] = palabra[i]
+        case 'DIAGONAL':
+            for i in range(len(palabra)):
+                letras[fila+i][columna+i] = palabra[i]
+        case default:
+            raise ValueError("Se pasó una dirección no válida a la función")
+
+    return letras
 
 
 def comprobar_posicion_y_direccion_validas(
@@ -226,7 +257,21 @@ def comprobar_posicion_y_direccion_validas(
         >>> comprueba_posicion(letras, 0, 3, DIAGONAL, "ADIOS")
         False
     """
-    pass
+    # Coprobamos la longitud y
+    if columna + len(palabra) > len(letras[0]) or columna + len(palabra) > len(letras):
+        return False
+    if fila + len(palabra) > len(letras) or fila + len(palabra) > len(letras):
+        return False
+    
+    match direccion:
+        case 'HORIZONTAL':
+            pass
+        case 'VERTICAL':
+            pass
+        case 'DIAGONAL':
+            pass
+        case default:
+            return True
 
 
 def insertar_palabra(
